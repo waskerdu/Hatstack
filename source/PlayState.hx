@@ -8,8 +8,8 @@ import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.FlxG;
 import flixel.system.scaleModes.RelativeScaleMode;
 /* TO DO
-Write hat pool
-Write inbox/outbox classes
+Write hat pool DONE
+Write inbox/outbox classes DONE
 Write stack
 Implement animator methods
 Impliment funnel (animation driven)
@@ -24,18 +24,33 @@ Implement control buttons (including reverse?)
 class PlayState extends FlxState
 {
 	var hats:FlxTypedGroup<Hat>;
-	var inbox:FlxSprite;
+	var hatPool:HatPool;
+	var stack:Stack;
+	var inbox:Inbox;
+	var outbox:Outbox;
+	var garbage:FlxSprite;
+	var animator:Animator;
 	override public function create():Void
 	{
 		//var order = new Order(100, 100, Order.inst, 3, "ADD", this);
+		hatPool = new HatPool();
+		animator = new Animator();
 		preVis();
+		add(hatPool);
+		animator.inbox = inbox;
+		animator.stack = stack;
+		animator.outbox = outbox;
+		animator.garbage = garbage;
+		animator.a_in();
+		add(garbage);
 		super.create();
 	}
 
 	function preVis(){
-		var inbox = new FlxSprite();
+		inbox = new Inbox(0,0, hatPool);
 		inbox.makeGraphic(800, 100);
-		var outbox = new FlxSprite();
+		inbox.loadHats();
+		outbox = new Outbox(0,0, hatPool);
 		outbox.makeGraphic(800, 100);
 		outbox.x = 1920-outbox.width;
 		var toolShelf = new FlxSprite();
@@ -46,11 +61,11 @@ class PlayState extends FlxState
 		script.makeGraphic(200, 1080-200, FlxColor.BLUE);
 		script.x = 1920-script.width - toolShelf.width -50;
 		script.y = 150;
-		var garbage = new FlxSprite();
+		garbage = new FlxSprite();
 		garbage.makeGraphic(300, 150, FlxColor.PURPLE);
 		garbage.x = 800-garbage.width;
 		garbage.y = 1080-garbage.height;
-		var stack = new FlxSprite();
+		stack = new Stack(hatPool);
 		stack.makeGraphic(320, 1080, FlxColor.YELLOW);
 		stack.x = 800;
 		var funnel = new FlxSprite();
@@ -65,7 +80,7 @@ class PlayState extends FlxState
 		add(outbox);
 		add(toolShelf);
 		add(script);
-		add(garbage);
+		//add(garbage);
 		add(stack);
 		add(funnel);
 		add(step);
