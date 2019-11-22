@@ -31,8 +31,15 @@ class Outbox extends FlxSprite{
     override function update(elapsed:Float) {
         for (i in 0...hats.length){
             //hats[i].position.x = this.width - hats[0].width * (hats.length - i);
-            hats[i].position.x = x + hats[0].width * (hats.length - i);
+            hats[i].x = x + hats[0].width * (hats.length - i);
         }
         super.update(elapsed);
+    }
+
+    public function flash(state:Array<Int>) {
+        hats.resize(0); // clears hats
+        for (val in state){
+            hats.push(hatPool.getHat(0, 0, val));
+        }
     }
 }

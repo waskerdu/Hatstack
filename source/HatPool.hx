@@ -14,7 +14,11 @@ class HatPool extends FlxTypedGroup<Hat>{
         if (hat == null){
             hat = new Hat(x, y, value);
             add(hat);
-        } else {hat.setValue(value);}
+        } 
+        else {
+            hat.setValue(value);
+            hat.revive();
+        }
         return hat;
     }
 }

@@ -8,7 +8,7 @@ import flixel.text.FlxText;
 import flixel.util.FlxColor;
 class Inbox extends FlxSprite{
     var hatPool:HatPool;
-    var hats:Array<Hat>;
+    public var hats:Array<Hat>;
 
     public function new(x:Float, y:Float, hatPool:HatPool) {
         super(x,y);
@@ -16,23 +16,25 @@ class Inbox extends FlxSprite{
         hats = new Array<Hat>();
     }
 
-    public function loadHats() {
-        for (i in 0...4){
-            var hat = hatPool.getHat(0,0,0);
-            hat.setValue(i);
-            hats.push(hat);
-        }
-        //trace(Std.string(hats.length));
-    }
-
     public function popHat() {
+        if(hats.length == 0){
+            trace("pop failed inbox empty");
+            return null;
+        }
         return hats.pop();
     }
     
     override function update(elapsed:Float) {
         for (i in 0...hats.length){
-            hats[i].position.x = this.width - hats[0].width * (hats.length - i);
+            hats[i].x = this.width - hats[0].width * (hats.length - i);
         }
         super.update(elapsed);
+    }
+
+    public function flash(state:Array<Int>) {
+        hats.resize(0); // clears hats
+        for (val in state){
+            hats.push(hatPool.getHat(0, 0, val));
+        }
     }
 }

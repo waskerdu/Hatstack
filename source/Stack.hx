@@ -18,13 +18,17 @@ class Stack extends FlxSprite{
 
     override function update(elapsed:Float) {
         for (i in 0...hats.length){
-            hats[i].position.x = spotX(i);
-            hats[i].position.y = spotY(i);
+            hats[i].x = spotX(i);
+            hats[i].y = spotY(i);
         }
         super.update(elapsed);
     }
 
     public function popHat() {
+        if(hats.length == 0){
+            trace("pop failed stack empty");
+            return null;
+        }
         return hats.pop();
     }
 
@@ -44,7 +48,17 @@ class Stack extends FlxSprite{
         return spotX(0);
     }
 
+    public function nElementY(i:Int) {
+        return spotY(hats.length-i-1);
+    }
     public function nextSpotY() {
         return spotY(hats.length);
+    }
+
+    public function flash(state:Array<Int>) {
+        hats.resize(0); // clears hats
+        for (val in state){
+            hats.push(hatPool.getHat(0, 0, val));
+        }
     }
 }
