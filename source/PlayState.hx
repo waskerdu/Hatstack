@@ -64,7 +64,10 @@ class PlayState extends FlxState
 		
 		add(new Button(1920 - 300, 100, 0, 0, "IN", 
 			function(){
-				script.pushOrder(orderPool.getOrder(0,0,0,"IN",0));
+				//script.pushOrder(orderPool.getOrder(0,0,0,"IN",0));
+				script.held = orderPool.getOrder(0,0,0,"IN",0);
+				script.held.selected = true;
+				script.held.setOffset();
 			}
 		));
 		add(new Button(1920 - 300, 200, 0, 0, "OUT", 

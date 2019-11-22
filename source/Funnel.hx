@@ -15,8 +15,8 @@ class Funnel extends Moveable{
         txt.text = label;
     }
 
-    override function setPosition() {
-        super.setPosition();
+    override function positionChildren() {
+        super.positionChildren();
         txt.y = y + sprite.height - txt.height - 10;
     }
 

@@ -25,10 +25,10 @@ class Moveable extends FlxGroup{
         add(txt);
     }
     override public function update(elapsed:Float) {
-        setPosition();
+        positionChildren();
         super.update(elapsed);
     }
-    public function setPosition() {
+    function positionChildren() {
         sprite.x = this.x + (width - sprite.width)/2;
         sprite.y = this.y + (width - sprite.width)/2;
         txt.x = sprite.x + sprite.width/2 - txt.width/2;
