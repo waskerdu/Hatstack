@@ -42,13 +42,14 @@ class Script extends FlxSprite{
             if(held != null){release();}
         }
         else if(FlxG.mouse.justPressed){
-            if(!mouseOver()){release;}
+            if(!mouseOver()){release();}
             else if (held == null){grab();}
             else{add();}
         }
     }
 
     function release() {
+        if(held == null || FlxG.mouse.x > x){return;}
         held.selected = false;
         held.kill();
         held = null;

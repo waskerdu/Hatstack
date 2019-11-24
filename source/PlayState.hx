@@ -7,18 +7,11 @@ import flixel.util.FlxColor;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.FlxG;
 import flixel.system.scaleModes.RelativeScaleMode;
-/* TO DO
-Write hat pool DONE
-Write inbox/outbox classes DONE
-Write stack DONE
-Implement animator methods DONE
-Impliment funnel (animation driven) 
-Write toolshelf class (make instructions clickable) DONE
-LATER
-Write order pool
-Write script class
+import flixel.system.FlxAssets;
+import openfl.Assets;
+import flixel.util.FlxSave;
+/*
 Implement robot arm
-Implement control buttons (including reverse?)
 */
 
 class PlayState extends FlxState
@@ -37,13 +30,21 @@ class PlayState extends FlxState
 	var script:Script;
 	var funnel:Funnel;
 	var pointer:FlxSprite;
+	var problems:String;
+	var notepad:Moveable;
+	var problemId:Int = 0;
+	var gameSave:FlxSave;
 	override public function create():Void
 	{
 		//var order = new Order(100, 100, Order.inst, 3, "ADD", this);
+		gameSave = new FlxSave();
+        gameSave.bind("slot0");
 		hatPool = new HatPool();
 		orderPool = new OrderPool();
 		animator = new Animator();
 		interpreter = new Interpreter(animator);
+		interpreter.errorCallback = error;
+		interpreter.clearCallback = levelClear;
 		preVis();
 		add(hatPool);
 		animator.inbox = inbox;
@@ -53,18 +54,19 @@ class PlayState extends FlxState
 		animator.funnel = funnel;
 		animator.hatPool = hatPool;
 		animator.interpreter = interpreter;
-		for (i in 0...4){
-			interpreter.input.push(i);
-		}
-		flashTableau();
+		reset();
 		add(garbage);
 		add(funnel);
-		add(new Button(step.x, step.y, 0, 0, "STEP", interpreter.step));
-		add(new Button(step.x + 100, step.y, 0, 0, "RUN", interpreter.start));
+		add(new Button(step.x, step.y-20, 0, 0, "RUN", interpreter.start));
+		add(new Button(step.x + 100, step.y-20, 0, 0, "STEP", interpreter.step));
+		add(new Button(step.x, step.y + 30, 0, 0, "STOP", reset));
+		add(new Button(step.x + 100, step.y + 30, 0, 0, "MENU", function(){FlxG.switchState(new MainMenu());} ));
+		//FlxG.switchState(new PlayState());
 		
 		add(new Button(1920 - 300, 100, 0, 0, "IN", 
 			function(){
 				//script.pushOrder(orderPool.getOrder(0,0,0,"IN",0));
+				if(script.held != null){script.held.selected = false; script.held.kill();}
 				script.held = orderPool.getOrder(0,0,0,"IN",0);
 				script.held.selected = true;
 				script.held.setOffset();
@@ -72,29 +74,40 @@ class PlayState extends FlxState
 		));
 		add(new Button(1920 - 300, 200, 0, 0, "OUT", 
 			function(){
-				script.pushOrder(orderPool.getOrder(0,0,0,"OUT",1));
+				//script.pushOrder(orderPool.getOrder(0,0,0,"IN",0));
+				if(script.held != null){script.held.selected = false; script.held.kill();}
+				script.held = orderPool.getOrder(0,0,0,"OUT",1);
+				script.held.selected = true;
+				script.held.setOffset();
 			}
 		));
 		add(new Button(1920 - 300, 300, 0, 0, "DUPE", 
 			function(){
-				script.pushOrder(orderPool.getOrder(0,0,0,"DUPE",2));
+				//script.pushOrder(orderPool.getOrder(0,0,0,"IN",0));
+				if(script.held != null){script.held.selected = false; script.held.kill();}
+				script.held = orderPool.getOrder(0,0,0,"DUPE",2);
+				script.held.selected = true;
+				script.held.setOffset();
 			}
 		));
 		add(new Button(1920 - 300, 400, 0, 0, "ADD", 
 			function(){
-				script.pushOrder(orderPool.getOrder(0,0,0,"ADD",3));
+				//script.pushOrder(orderPool.getOrder(0,0,0,"IN",0));
+				if(script.held != null){script.held.selected = false; script.held.kill();}
+				script.held = orderPool.getOrder(0,0,0,"ADD",3);
+				script.held.selected = true;
+				script.held.setOffset();
 			}
 		));
 		add(new Button(1920 - 300, 500, 0, 0, "DEL", 
 			function(){
-				script.pushOrder(orderPool.getOrder(0,0,0,"DEL",4));
+				//script.pushOrder(orderPool.getOrder(0,0,0,"IN",0));
+				if(script.held != null){script.held.selected = false; script.held.kill();}
+				script.held = orderPool.getOrder(0,0,0,"DEL",4);
+				script.held.selected = true;
+				script.held.setOffset();
 			}
 		));
-		/*add(new Button(1920 - 300, 100, 0, 0, "IN", interpreter.i_in));
-		add(new Button(1920 - 300, 200, 0, 0, "OUT", interpreter.i_out));
-		add(new Button(1920 - 300, 300, 0, 0, "DEL", interpreter.i_del));
-		add(new Button(1920 - 300, 400, 0, 0, "DUPE", interpreter.i_dupe));
-		add(new Button(1920 - 300, 500, 0, 0, "ADD", interpreter.i_add));*/
 		add(orderPool);
 		add(pointer);
 		script.pointer = pointer;
@@ -108,9 +121,46 @@ class PlayState extends FlxState
 		outbox.flash(interpreter.output);
 	}
 
+	function reset() {
+		problemId = gameSave.data.problemId;
+		animator.cancelAnimation();
+		var str = Assets.getText("assets/data/gameData.json");
+		var runId = 1;
+		var problem = haxe.Json.parse(str).problems[problemId];
+		notepad.sprite.makeGraphic(500,500,FlxColor.GREEN);
+		notepad.txt.text = problem.description;
+		interpreter.reset();
+		interpreter.input = problem.fixed[runId].input.reverse();
+		interpreter.stack = problem.fixed[runId].stack;
+		interpreter.output = new Array<Int>();
+		interpreter.valid = problem.fixed[runId].valid;
+		flashTableau();
+	}
+
+	function levelClear(programSize:Int, steps:Int) {
+		notepad.sprite.makeGraphic(500,500,FlxColor.GREEN);
+		notepad.txt.text = "All tests passing!\nProgram size: "+programSize+"\nSteps taken: "+steps;
+	}
+
+	function saveProgram(program:Array<Int>){
+		gameSave.data.programs[problemId] = program;
+	}
+
+	function error(error:String) {
+		notepad.sprite.makeGraphic(500,500,FlxColor.RED);
+		notepad.txt.text = error;
+	}
+
 	function preVis(){
 		inbox = new Inbox(0,0, hatPool);
 		inbox.makeGraphic(800, 100);
+
+		notepad = new Moveable(0,100,"",FlxColor.BLACK);
+		notepad.sprite.makeGraphic(500,500,FlxColor.GREEN);
+		notepad.txt.text = "Note";
+		notepad.moving = false;
+		notepad.txt.y = 100;
+		notepad.txt.fieldWidth = 500;
 
 		outbox = new Outbox(0,0, hatPool);
 		outbox.makeGraphic(800, 100);
@@ -155,6 +205,7 @@ class PlayState extends FlxState
 		//add(garbage);
 		add(stack);
 		add(step);
+		add(notepad);
 	}
 
 	override public function update(elapsed:Float):Void

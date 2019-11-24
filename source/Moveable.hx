@@ -13,6 +13,7 @@ class Moveable extends FlxGroup{
     public var y:Float;
     public var width = 100.0;
     public var sprite:FlxSprite;
+    public var moving=true;
     public function new(x:Float, y:Float, spriteName:String, color:FlxColor) {
         super();
         this.x=x;
@@ -29,6 +30,7 @@ class Moveable extends FlxGroup{
         super.update(elapsed);
     }
     function positionChildren() {
+        if(!moving){return;}
         sprite.x = this.x + (width - sprite.width)/2;
         sprite.y = this.y + (width - sprite.width)/2;
         txt.x = sprite.x + sprite.width/2 - txt.width/2;

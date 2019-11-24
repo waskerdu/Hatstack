@@ -4,6 +4,7 @@ import flixel.tweens.FlxEase;
 import flixel.FlxBasic;
 import flixel.FlxSprite;
 import flixel.tweens.FlxTween;
+import flixel.tweens.misc.VarTween;
 
 class Animator extends FlxBasic{
     public var inbox:Inbox;
@@ -13,12 +14,17 @@ class Animator extends FlxBasic{
     public var funnel:Funnel;
     public var hatPool:HatPool;
     public var interpreter:Interpreter;
+    var currentAnimation:VarTween;
     function play(obj:Moveable, endX:Float, endY:Float, duration:Float, type:EaseFunction, method:(Void -> Void)){
-        FlxTween.tween(obj, {x:endX, y:endY}, duration, {ease: type, onComplete:
+        currentAnimation = FlxTween.tween(obj, {x:endX, y:endY}, duration, {ease: type, onComplete:
             function(tween:FlxTween){
                 method();
             }
         });
+    }
+    public function cancelAnimation() {
+        if(currentAnimation == null){return;}
+        currentAnimation.cancel();
     }
     public function a_in(){
         var hat = inbox.popHat();
@@ -54,7 +60,7 @@ class Animator extends FlxBasic{
     public function a_funnel(method:String, cover:Int, values:Array<Int>){
         var funnelY = funnel.y;
         funnel.setLabel(method);
-        play(funnel, funnel.x, stack.nElementY(cover) - funnel.sprite.height, 2, FlxEase.linear,
+        play(funnel, funnel.x, stack.nElementY(cover) - funnel.sprite.height, 1, FlxEase.linear,
             function(){
                 for (i in 0...cover){
                     stack.popHat().kill();
@@ -62,7 +68,7 @@ class Animator extends FlxBasic{
                 for (i in values){
                     stack.pushHat(hatPool.getHat(0,0,i));
                 }
-                play(funnel, funnel.x, funnelY, 2, FlxEase.linear, 
+                play(funnel, funnel.x, funnelY, 1, FlxEase.linear, 
                 function (){
                     funnel.resetLabel();
                     interpreter.clock();

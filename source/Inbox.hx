@@ -27,6 +27,7 @@ class Inbox extends FlxSprite{
     override function update(elapsed:Float) {
         for (i in 0...hats.length){
             hats[i].x = this.width - hats[0].width * (hats.length - i);
+            hats[i].y = y;
         }
         super.update(elapsed);
     }

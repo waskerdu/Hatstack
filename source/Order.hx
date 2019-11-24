@@ -21,6 +21,8 @@ class Order extends Moveable{
     public function setOffset() {
         //offsetX = x - FlxG.mouse.x;
         //offsetY = y - FlxG.mouse.y;
+        offsetX = -sprite.width/2;
+        offsetY = -sprite.height/2;
     }
 
     override function update(elapsed:Float) {

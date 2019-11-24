@@ -1,0 +1,55 @@
+{
+    "problems": [
+        {
+            "name":"Tutorial",
+            "description":"Simple as pie! Drag the input command into the script box, then the output command. Hit run and watch it go. Notice your program will run until the inbox is empty.",
+            "fixed":[
+                {
+                    "input":[5,10],
+                    "valid":[5,10],
+                    "stack":[]
+                },
+                {
+                    "input":[2,3,4,6],
+                    "valid":[2,3,4,6],
+                    "stack":[]
+                }
+            ],
+            "solution":[]
+        },
+        {
+            "name":"Reverse",
+            "description":"For this problem the outbox should look just like the inbox but reversed. Notice that the inbox will always have 3 values.",
+            "fixed":[
+                {
+                    "input":[5,10,6],
+                    "valid":[6,10,5],
+                    "stack":[]
+                },
+                {
+                    "input":[2,3,4],
+                    "valid":[4,3,2],
+                    "stack":[]
+                }
+            ],
+            "solution":[]
+        },
+        {
+            "name":"Adding",
+            "description":"Check out that add command! Inbox two hats, use the add command, and outbox the result.",
+            "fixed":[
+                {
+                    "input":[5,10],
+                    "valid":[15],
+                    "stack":[]
+                },
+                {
+                    "input":[2,3,4,6],
+                    "valid":[5, 10],
+                    "stack":[]
+                }
+            ],
+            "solution":[]
+        }
+    ]
+}
