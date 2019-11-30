@@ -50,6 +50,40 @@
                 }
             ],
             "solution":[]
+        },
+        {
+            "name":"Dupe",
+            "description":"Let's use the duplicate command. Add double the first hat to the second hat and outbox it twice.",
+            "fixed":[
+                {
+                    "input":[5,10],
+                    "valid":[20,20],
+                    "stack":[]
+                },
+                {
+                    "input":[2,3,4,6],
+                    "valid":[7,7,14,14],
+                    "stack":[]
+                }
+            ],
+            "solution":[]
+        },
+        {
+            "name":"Trash",
+            "description":"Sometimes a hat can't be saved and has to be trashed. Add the first and third values in the inbox. Discard the second.",
+            "fixed":[
+                {
+                    "input":[5,10,20],
+                    "valid":[25],
+                    "stack":[]
+                },
+                {
+                    "input":[2,3,4,7,9,12],
+                    "valid":[6,19],
+                    "stack":[]
+                }
+            ],
+            "solution":[]
         }
     ]
 }

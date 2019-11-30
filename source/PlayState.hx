@@ -10,7 +10,20 @@ import flixel.system.scaleModes.RelativeScaleMode;
 import flixel.system.FlxAssets;
 import openfl.Assets;
 import flixel.util.FlxSave;
-/*
+/* TO DO
+Instruction map
+Mouse manager
+Headless interpreter
+Interpreter save states/reverse feature
+Speed slider
+Save solutions
+Solution slot gui
+Problem version gui (lights, black means untested, red means failed, green means passed, yellow means testing)
+(Checks, crosses, and question marks for the colorblind. box around the currently viewed)
+Bytecode to script pointer map
+Comments
+Labels and jumps (how to display conditionals? measuring? scanning?)
+Variables
 Implement robot arm
 */
 

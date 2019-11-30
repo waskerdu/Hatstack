@@ -46,9 +46,9 @@ class Animator extends FlxBasic{
     }
     public function a_del(){
         var hat = stack.popHat();
-        play(hat, garbage.x + 100, garbage.y - 600, 2, FlxEase.linear, 
+        play(hat, garbage.x + 100, garbage.y - 600, 0.5, FlxEase.linear, 
             function(){
-                play(hat, garbage.x + 100, garbage.y, 2, FlxEase.linear, 
+                play(hat, garbage.x + 100, garbage.y, 0.5, FlxEase.linear, 
                     function(){
                         hat.kill();
                         interpreter.clock();
